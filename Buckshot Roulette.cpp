@@ -36,8 +36,8 @@ void playGame() {
     char choice;
 
     while (playerLives > 0 && hostLives > 0) {
-        for (int subRound = 1; subRound <= 2; ++subRound) { // подраунды 1.1 и 1.2
-            int bulletCount = (round - 1) * 2 + subRound * 2; // количество патронов
+        for (int level = 1; level <= 2; ++level) { // уровни 1 и 2
+            int bulletCount = (round - 1) * 2 + level * 2; // количество патронов
             if (bulletCount > 8) bulletCount = 8; // ограничение на максимальное количество патронов (8)
             int liveBulletCount = bulletCount / 2; // количество боевых патронов
             int blankBulletCount = bulletCount - liveBulletCount; // количество холостых патронов
@@ -56,7 +56,12 @@ void playGame() {
             std::mt19937 g(rd());
             std::shuffle(chamber.begin(), chamber.end(), g);
 
-            std::cout << "Round " << round << "." << subRound << " starts. Player lives: " << playerLives << ", Host lives: " << hostLives << "\n"; // Начинается раунд round.subRound. Жизни игрока: playerLives, Жизни ведущего: hostLives
+            std::cout << "Round " << round << ", Level " << level << " starts. Player lives: " << playerLives << ", Host lives: " << hostLives << "\n"; // Начинается раунд round, уровень level. Жизни игрока: playerLives, Жизни ведущего: hostLives
+            std::cout << "Bullets: ";
+            for (int bullet : chamber) {
+                std::cout << (bullet == 1 ? "Live " : "Blank ");
+            }
+            std::cout << "\n";
 
             bool roundOver = false;
             while (!roundOver) {
