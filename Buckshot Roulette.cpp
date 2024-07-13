@@ -28,6 +28,12 @@ int main() {
     return 0;
 }
 
+// Функция для получения случайной фразы из списка
+std::string getRandomPhrase(const std::vector<std::string>& phrases) {
+    int index = std::rand() % phrases.size();
+    return phrases[index];
+}
+
 void playGame() {
     int playerLives = 2; // жизни игрока в первом раунде
     int hostLives = 2; // жизни ведущего в первом раунде
@@ -36,6 +42,42 @@ void playGame() {
     int hostScore = 0; // очки ведущего
     bool isPlayerTurn = true; // определяем, чей ход (true - игрока, false - ведущего)
     char choice;
+
+    // Фразы для разных событий
+    std::vector<std::string> survivePhrases = {
+        "You survived, it's funny.", // Вы выжили, это смешно.
+        "Lucky you, still alive!", // Везет вам, вы еще живы!
+        "Click! No bullet this time.", // Щелчок! Патронов нет.
+        "You're safe... for now." // Вы в безопасности... пока что.
+    };
+
+    std::vector<std::string> bangPhrases = {
+        "Bang! That must've hurt, right?", // Выстрел! Это должно быть больно, не так ведь?
+        "Boom! You lost a life.", // Бах! Вы потеряли жизнь.
+        "Boom! One life less.", // Бум! Одной жизнью меньше.
+        "Oh no, you got hit!" // О нет, вы получили удар!
+    };
+
+    std::vector<std::string> hostSurvivePhrases = {
+        "The host got lucky, but will they be lucky again?", // Ведущему повезло, но повезет ли еще раз?
+        "Click! The host is still alive.", // Щелчок! Ведущий все еще жив.
+        "The host got lucky this time.", // Ведущему повезло в этот раз.
+        "The host is safe... for now." // Ведущий в безопасности... пока что.
+    };
+
+    std::vector<std::string> hostBangPhrases = {
+        "The host got the worst luck, must've hurt, right?", // Ведущему повезло меньше всех, должно быть больно, да?
+        "Bang! The host lost a life.", // Бах! Ведущий потерял жизнь.
+        "Boom! The host lost one life.", // Бум! Ведущий потерял одну жизнь.
+        "Oh no, the host got hit!" // О нет, ведущий получил удар!
+    };
+
+    std::vector<std::string> jamPhrases = {
+        "It's a pity that the gun jammed, it would have been a show.", // Жаль что пистолет заклинило, было бы зрелище.
+        "Oops! The gun jammed.", // Упс! Пистолет заклинило.
+        "The gun jammed. Better luck next time.", // Пистолет застрял. В следующий раз повезет.
+        "No shot this time, gun jammed." // В этот раз не выстрелил, пистолет заклинило.
+    };
 
     while (true) {
         // Определяем жизни в зависимости от раунда
@@ -82,20 +124,20 @@ void playGame() {
                         int bullet = chamber.back(); // берем последний патрон
                         chamber.pop_back(); // удаляем его из барабана
                         if (bullet == 1) {
-                            std::cout << "Bang! You lost a life.\n"; // Бах! Вы потеряли жизнь.
+                            std::cout << getRandomPhrase(bangPhrases) << "\n"; // случайная фраза при выстреле боевым патроном
                             playerLives--;
                             hostScore++; // ведущий получает очко
                             roundOver = true; // раунд заканчивается
                         }
                         else if (bullet == 0) {
-                            std::cout << "Click! It was a blank. You get another turn.\n"; // Щелчок! Это был холостой патрон. Ваш ход снова.
+                            std::cout << getRandomPhrase(survivePhrases) << "\n"; // случайная фраза при выстреле холостым патроном
                             playerScore++; // игрок получает очко за успешный выстрел холостым патроном
                             if (chamber.empty()) {
                                 roundOver = true; // если патроны закончились, раунд заканчивается
                             }
                         }
                         else if (bullet == 2) {
-                            std::cout << "Jam! The gun jammed. You lose your turn.\n"; // Клин! Патрон застрял. Вы пропускаете ход.
+                            std::cout << getRandomPhrase(jamPhrases) << "\n"; // случайная фраза при клине патрона
                             std::shuffle(chamber.begin(), chamber.end(), g); // перемешиваем патроны снова
                             if (rand() % 3 == 0) {
                                 roundOver = true; // если вероятность 33%, раунд заканчивается
@@ -115,46 +157,40 @@ void playGame() {
                     int bullet = chamber.back(); // берем последний патрон
                     chamber.pop_back(); // удаляем его из барабана
                     if (bullet == 1) {
-                        std::cout << "Bang! The host lost a life.\n"; // Бах! Ведущий потерял жизнь.
+                        std::cout << getRandomPhrase(hostBangPhrases) << "\n"; // случайная фраза при выстреле боевым патроном ведущим
                         hostLives--;
                         playerScore++; // игрок получает очко
                         roundOver = true; // раунд заканчивается
                     }
                     else if (bullet == 0) {
-                        std::cout << "Click! It was a blank. The host gets another turn.\n"; // Щелчок! Это был холостой патрон. Ход ведущего снова.
+                        std::cout << getRandomPhrase(hostSurvivePhrases) << "\n"; // случайная фраза при выстреле холостым патроном ведущим
                         hostScore++; // ведущий получает очко за успешный выстрел холостым патроном
                         if (chamber.empty()) {
                             roundOver = true; // если патроны закончились, раунд заканчивается
                         }
                     }
                     else if (bullet == 2) {
-                        std::cout << "Jam! The gun jammed. The host loses their turn.\n"; // Клин! Патрон застрял. Ведущий пропускает ход.
+                        std::cout << getRandomPhrase(jamPhrases) << "\n"; // случайная фраза при клине патрона
                         std::shuffle(chamber.begin(), chamber.end(), g); // перемешиваем патроны снова
                         if (rand() % 3 == 0) {
                             roundOver = true; // если вероятность 33%, раунд заканчивается
                         }
                     }
                 }
-
-                // Переключаем ход
-                isPlayerTurn = !isPlayerTurn;
+                isPlayerTurn = !isPlayerTurn; // смена хода
             }
 
-            if (playerLives == 0 || hostLives == 0) {
-                break; // если у кого-то закончились жизни, уровень заканчивается
-            }
-        }
+            std::cout << "End of Level " << level << ". Player lives: " << playerLives << ", Host lives: " << hostLives << "\n"; // Конец уровня level. Жизни игрока: playerLives, Жизни ведущего: hostLives
 
-        // Определение победителя текущего раунда
-        if (playerLives == 0) {
-            std::cout << "You lost all your lives. The host wins!\n"; // Вы потеряли все свои жизни. Ведущий победил!
-            std::cout << "Final Score - Player: " << playerScore << ", Host: " << hostScore << "\n"; // Итоговый счет - Игрок: playerScore, Ведущий: hostScore
-            break;
-        }
-        else if (hostLives == 0) {
-            std::cout << "The host lost all their lives. You win this round!\n"; // Ведущий потерял все свои жизни. Вы выиграли этот раунд!
-            round++;
-            std::cout << "Starting Round " << round << ".\n"; // Начинается раунд round.
+            if (playerLives <= 0) {
+                std::cout << "You lost all your lives. Game over.\n"; // Вы потеряли все свои жизни. Игра окончена.
+                return;
+            }
+            else if (hostLives <= 0) {
+                std::cout << "The host lost all their lives. You move to the next round.\n"; // Ведущий потерял все свои жизни. Вы переходите в следующий раунд.
+                round++;
+                break;
+            }
         }
     }
 }
