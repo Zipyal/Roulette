@@ -32,6 +32,8 @@ void playGame() {
     int playerLives = 2; // жизни игрока в первом раунде
     int hostLives = 2; // жизни ведущего в первом раунде
     int round = 1; // текущий раунд
+    int playerScore = 0; // очки игрока
+    int hostScore = 0; // очки ведущего
     bool isPlayerTurn = true; // определяем, чей ход (true - игрока, false - ведущего)
     char choice;
 
@@ -56,6 +58,7 @@ void playGame() {
             for (int i = 0; i < blankBulletCount; ++i) {
                 chamber.push_back(0); // 0 означает холостой патрон
             }
+            chamber.push_back(2); // 2 означает клин патрона
 
             // Перемешиваем патроны в барабане
             std::random_device rd;
@@ -65,7 +68,7 @@ void playGame() {
             std::cout << "Round " << round << ", Level " << level << " starts. Player lives: " << playerLives << ", Host lives: " << hostLives << "\n"; // Начинается раунд round, уровень level. Жизни игрока: playerLives, Жизни ведущего: hostLives
             std::cout << "Bullets: ";
             for (int bullet : chamber) {
-                std::cout << (bullet == 1 ? "Live " : "Blank ");
+                std::cout << (bullet == 1 ? "Live " : bullet == 0 ? "Blank " : "Jam ");
             }
             std::cout << "\n";
 
@@ -81,12 +84,21 @@ void playGame() {
                         if (bullet == 1) {
                             std::cout << "Bang! You lost a life.\n"; // Бах! Вы потеряли жизнь.
                             playerLives--;
+                            hostScore++; // ведущий получает очко
                             roundOver = true; // раунд заканчивается
                         }
-                        else {
+                        else if (bullet == 0) {
                             std::cout << "Click! It was a blank. You get another turn.\n"; // Щелчок! Это был холостой патрон. Ваш ход снова.
+                            playerScore++; // игрок получает очко за успешный выстрел холостым патроном
                             if (chamber.empty()) {
                                 roundOver = true; // если патроны закончились, раунд заканчивается
+                            }
+                        }
+                        else if (bullet == 2) {
+                            std::cout << "Jam! The gun jammed. You lose your turn.\n"; // Клин! Патрон застрял. Вы пропускаете ход.
+                            std::shuffle(chamber.begin(), chamber.end(), g); // перемешиваем патроны снова
+                            if (rand() % 3 == 0) {
+                                roundOver = true; // если вероятность 33%, раунд заканчивается
                             }
                         }
                     }
@@ -105,12 +117,21 @@ void playGame() {
                     if (bullet == 1) {
                         std::cout << "Bang! The host lost a life.\n"; // Бах! Ведущий потерял жизнь.
                         hostLives--;
+                        playerScore++; // игрок получает очко
                         roundOver = true; // раунд заканчивается
                     }
-                    else {
+                    else if (bullet == 0) {
                         std::cout << "Click! It was a blank. The host gets another turn.\n"; // Щелчок! Это был холостой патрон. Ход ведущего снова.
+                        hostScore++; // ведущий получает очко за успешный выстрел холостым патроном
                         if (chamber.empty()) {
                             roundOver = true; // если патроны закончились, раунд заканчивается
+                        }
+                    }
+                    else if (bullet == 2) {
+                        std::cout << "Jam! The gun jammed. The host loses their turn.\n"; // Клин! Патрон застрял. Ведущий пропускает ход.
+                        std::shuffle(chamber.begin(), chamber.end(), g); // перемешиваем патроны снова
+                        if (rand() % 3 == 0) {
+                            roundOver = true; // если вероятность 33%, раунд заканчивается
                         }
                     }
                 }
@@ -127,15 +148,13 @@ void playGame() {
         // Определение победителя текущего раунда
         if (playerLives == 0) {
             std::cout << "You lost all your lives. The host wins!\n"; // Вы потеряли все свои жизни. Ведущий победил!
+            std::cout << "Final Score - Player: " << playerScore << ", Host: " << hostScore << "\n"; // Итоговый счет - Игрок: playerScore, Ведущий: hostScore
             break;
         }
         else if (hostLives == 0) {
             std::cout << "The host lost all their lives. You win this round!\n"; // Ведущий потерял все свои жизни. Вы выиграли этот раунд!
+            round++;
+            std::cout << "Starting Round " << round << ".\n"; // Начинается раунд round.
         }
-
-        // Переход к следующему раунду
-        round++;
-        std::cout << "Starting Round " << round << ".\n"; // Начинается раунд round.
     }
 }
-
