@@ -120,18 +120,17 @@ void playGame() {
             }
 
             if (playerLives == 0 || hostLives == 0) {
-                break; // если у кого-то закончились жизни, игра заканчивается
+                break; // если у кого-то закончились жизни, уровень заканчивается
             }
         }
 
-        // Определение победителя
+        // Определение победителя текущего раунда
         if (playerLives == 0) {
             std::cout << "You lost all your lives. The host wins!\n"; // Вы потеряли все свои жизни. Ведущий победил!
             break;
         }
         else if (hostLives == 0) {
-            std::cout << "The host lost all their lives. You win!\n"; // Ведущий потерял все свои жизни. Вы победили!
-            break;
+            std::cout << "The host lost all their lives. You win this round!\n"; // Ведущий потерял все свои жизни. Вы выиграли этот раунд!
         }
 
         // Переход к следующему раунду
@@ -139,3 +138,4 @@ void playGame() {
         std::cout << "Starting Round " << round << ".\n"; // Начинается раунд round.
     }
 }
+
