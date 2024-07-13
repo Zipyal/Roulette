@@ -29,13 +29,19 @@ int main() {
 }
 
 void playGame() {
-    int playerLives = 2; // жизни игрока
-    int hostLives = 2; // жизни ведущего
+    int playerLives = 2; // жизни игрока в первом раунде
+    int hostLives = 2; // жизни ведущего в первом раунде
     int round = 1; // текущий раунд
     bool isPlayerTurn = true; // определяем, чей ход (true - игрока, false - ведущего)
     char choice;
 
-    while (playerLives > 0 && hostLives > 0) {
+    while (true) {
+        // Определяем жизни в зависимости от раунда
+        if (round == 2) {
+            playerLives = 4;
+            hostLives = 4;
+        }
+
         for (int level = 1; level <= 2; ++level) { // уровни 1 и 2
             int bulletCount = (round - 1) * 2 + level * 2; // количество патронов
             if (bulletCount > 8) bulletCount = 8; // ограничение на максимальное количество патронов (8)
@@ -118,15 +124,18 @@ void playGame() {
             }
         }
 
+        // Определение победителя
+        if (playerLives == 0) {
+            std::cout << "You lost all your lives. The host wins!\n"; // Вы потеряли все свои жизни. Ведущий победил!
+            break;
+        }
+        else if (hostLives == 0) {
+            std::cout << "The host lost all their lives. You win!\n"; // Ведущий потерял все свои жизни. Вы победили!
+            break;
+        }
+
         // Переход к следующему раунду
         round++;
-    }
-
-    // Определение победителя
-    if (playerLives == 0) {
-        std::cout << "You lost all your lives. The host wins!\n"; // Вы потеряли все свои жизни. Ведущий победил!
-    }
-    else if (hostLives == 0) {
-        std::cout << "The host lost all their lives. You win!\n"; // Ведущий потерял все свои жизни. Вы победили!
+        std::cout << "Starting Round " << round << ".\n"; // Начинается раунд round.
     }
 }
